@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="SportPerformance.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="Panel de Control" Style="{StaticResource TituloStyle}"/>
+
+            <WrapPanel>
+                <Border Background="#F5F5F5" Padding="20" Margin="0,0,15,15" CornerRadius="8" Width="220">
+                    <StackPanel>
+                        <TextBlock Text="Entrenamientos" Style="{StaticResource LabelStyle}" Foreground="#666666" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding TotalEntrenamientos}" FontSize="28" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="#F5F5F5" Padding="20" Margin="0,0,15,15" CornerRadius="8" Width="220">
+                    <StackPanel>
+                        <TextBlock Text="Ejercicios" Style="{StaticResource LabelStyle}" Foreground="#666666" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding TotalEjercicios}" FontSize="28" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="#F5F5F5" Padding="20" Margin="0,0,15,15" CornerRadius="8" Width="220">
+                    <StackPanel>
+                        <TextBlock Text="Series Registradas" Style="{StaticResource LabelStyle}" Foreground="#666666" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding TotalSeries}" FontSize="28" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="#F5F5F5" Padding="20" Margin="0,0,15,15" CornerRadius="8" Width="220">
+                    <StackPanel>
+                        <TextBlock Text="Último Entrenamiento" Style="{StaticResource LabelStyle}" Foreground="#666666" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding UltimoEntrenamiento}" FontSize="28" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

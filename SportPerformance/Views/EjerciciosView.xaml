@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="SportPerformance.Views.EjerciciosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Gestión de Ejercicios" Style="{StaticResource TituloStyle}"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
+            <TextBlock Text="Nombre:" Style="{StaticResource LabelStyle}"/>
+            <TextBox Width="120" Text="{Binding NuevoNombre, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Músculo:" Style="{StaticResource LabelStyle}"/>
+            <TextBox Width="120" Text="{Binding NuevoMusculo, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Button Content="Nuevo" Command="{Binding GuardarEjercicioCommand}" Width="70"/>
+            <Button Content="Actualizar" Command="{Binding ActualizarEjercicioCommand}" Width="80"/>
+            <Button Content="Eliminar" Command="{Binding EliminarEjercicioCommand}" Width="80" Style="{StaticResource BotonEliminarStyle}"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2" ItemsSource="{Binding ListaEjercicios}" SelectedItem="{Binding EjercicioSeleccionado}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*"/>
+                <DataGridTextColumn Header="Grupo Muscular" Binding="{Binding GrupoMuscular}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

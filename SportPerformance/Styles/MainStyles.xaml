@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="TituloStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="0,0,0,20"/>
+        <Setter Property="Foreground" Value="#333333"/>
+    </Style>
+
+    <Style x:Key="LabelStyle" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0,0,5,0"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style TargetType="TextBox">
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Margin" Value="0,0,15,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="#CCCCCC"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <Style TargetType="ComboBox">
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Margin" Value="0,0,15,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style TargetType="DatePicker">
+        <Setter Property="Margin" Value="0,0,15,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="Margin" Value="0,0,10,0"/>
+        <Setter Property="Background" Value="#007ACC"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style x:Key="BotonEliminarStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background" Value="#D9534F"/>
+    </Style>
+
+    <Style x:Key="MenuButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#333333"/>
+        <Setter Property="Margin" Value="0,5"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+    </Style>
+
+    <Style TargetType="DataGrid">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="AlternatingRowBackground" Value="#F9F9F9"/>
+        <Setter Property="RowHeight" Value="30"/>
+        <Setter Property="ColumnHeaderHeight" Value="35"/>
+        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="#E0E0E0"/>
+        <Setter Property="VerticalGridLinesBrush" Value="Transparent"/>
+    </Style>
+
+</ResourceDictionary>
