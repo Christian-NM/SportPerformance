@@ -13,14 +13,14 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
             <TextBlock Text="Fecha:" Style="{StaticResource LabelStyle}"/>
-            <DatePicker SelectedDate="{Binding NuevaFecha, UpdateSourceTrigger=PropertyChanged}" Width="110"/>
+            <DatePicker SelectedDate="{Binding NuevaFecha, UpdateSourceTrigger=PropertyChanged}" Width="110" Margin="5,0,15,0"/>
 
             <TextBlock Text="Comentario:" Style="{StaticResource LabelStyle}"/>
-            <TextBox Width="150" Text="{Binding NuevoComentario, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Width="150" Text="{Binding NuevoComentario, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,15,0"/>
 
-            <Button Content="Nuevo" Command="{Binding GuardarEntrenamientoCommand}" Width="70"/>
-            <Button Content="Actualizar" Command="{Binding ActualizarEntrenamientoCommand}" Width="80"/>
-            <Button Content="Eliminar" Command="{Binding EliminarEntrenamientoCommand}" Width="80" Style="{StaticResource BotonEliminarStyle}"/>
+            <Button Content="Nuevo" Command="{Binding GuardarCommand}" Width="70" Margin="0,0,5,0"/>
+            <Button Content="Actualizar" Command="{Binding GuardarCommand}" Width="80" Margin="0,0,5,0"/>
+            <Button Content="Eliminar" Command="{Binding EliminarCommand}" Width="80" Background="#E74C3C" Foreground="White" BorderThickness="0"/>
         </StackPanel>
 
         <DataGrid Grid.Row="2" ItemsSource="{Binding ListaEntrenamientos}" SelectedItem="{Binding EntrenamientoSeleccionado}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">

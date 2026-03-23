@@ -1,225 +1,140 @@
-﻿using System;
+﻿using SportPerformance.Helpers;
+using SportPerformance.Models;
+using SportPerformance.Repositories;
 using System.Collections.ObjectModel;
-using System.Data.SQLite;
 using System.Linq;
 using System.Windows.Input;
-using SportPerformance.Helpers;
-using SportPerformance.Models;
 
 namespace SportPerformance.ViewModels
 {
-    public class SerieDisplay
-    {
-        public int Id { get; set; }
-        public int IdEntrenamiento { get; set; }
-        public int IdEjercicio { get; set; }
-        public string? EntrenamientoInfo { get; set; }
-        public string? EjercicioNombre { get; set; }
-        public double Peso { get; set; }
-        public int Repeticiones { get; set; }
-    }
-
     public class SeriesViewModel : BaseViewModel
     {
-        public ObservableCollection<SerieDisplay> ListaSeries { get; set; }
-        public ObservableCollection<Entrenamiento> ListaEntrenamientos { get; set; }
-        public ObservableCollection<Ejercicio> ListaEjercicios { get; set; }
+        private readonly IRepository<Serie> _serieRepository;
+        private readonly IRepository<Ejercicio> _ejercicioRepository;
+        private readonly IRepository<Entrenamiento> _entrenamientoRepository;
 
-        private Entrenamiento? _entrenamientoSeleccionado;
-        public Entrenamiento? EntrenamientoSeleccionado
-        {
-            get => _entrenamientoSeleccionado;
-            set { _entrenamientoSeleccionado = value; OnPropertyChanged(); }
-        }
+        private ObservableCollection<Serie> _listaSeries = new();
+        private ObservableCollection<Ejercicio> _listaEjercicios = new();
+        private ObservableCollection<Entrenamiento> _listaEntrenamientos = new();
 
+        private Serie? _serieSeleccionada;
         private Ejercicio? _ejercicioSeleccionado;
-        public Ejercicio? EjercicioSeleccionado
+        private Entrenamiento? _entrenamientoSeleccionado;
+        private double _nuevoPeso;
+        private int _nuevasRepeticiones;
+
+        public ObservableCollection<Serie> ListaSeries
         {
-            get => _ejercicioSeleccionado;
-            set { _ejercicioSeleccionado = value; OnPropertyChanged(); }
+            get => _listaSeries;
+            set { _listaSeries = value; OnPropertyChanged(nameof(ListaSeries)); }
         }
 
-        private double _peso;
-        public double Peso
+        public ObservableCollection<Ejercicio> ListaEjercicios
         {
-            get => _peso;
-            set { _peso = value; OnPropertyChanged(); }
+            get => _listaEjercicios;
+            set { _listaEjercicios = value; OnPropertyChanged(nameof(ListaEjercicios)); }
         }
 
-        private int _repeticiones;
-        public int Repeticiones
+        public ObservableCollection<Entrenamiento> ListaEntrenamientos
         {
-            get => _repeticiones;
-            set { _repeticiones = value; OnPropertyChanged(); }
+            get => _listaEntrenamientos;
+            set { _listaEntrenamientos = value; OnPropertyChanged(nameof(ListaEntrenamientos)); }
         }
 
-        private SerieDisplay? _serieSeleccionada;
-        public SerieDisplay? SerieSeleccionada
+        public Serie? SerieSeleccionada
         {
             get => _serieSeleccionada;
             set
             {
                 _serieSeleccionada = value;
+                OnPropertyChanged(nameof(SerieSeleccionada));
                 if (_serieSeleccionada != null)
                 {
-                    EntrenamientoSeleccionado = ListaEntrenamientos.FirstOrDefault(e => e.Id == _serieSeleccionada.IdEntrenamiento);
-                    EjercicioSeleccionado = ListaEjercicios.FirstOrDefault(e => e.Id == _serieSeleccionada.IdEjercicio);
-                    Peso = _serieSeleccionada.Peso;
-                    Repeticiones = _serieSeleccionada.Repeticiones;
+                    NuevoPeso = _serieSeleccionada.Peso;
+                    NuevasRepeticiones = _serieSeleccionada.Repeticiones;
+                    EjercicioSeleccionado = ListaEjercicios.FirstOrDefault(e => e.IdEjercicio == _serieSeleccionada.IdEjercicio);
+                    EntrenamientoSeleccionado = ListaEntrenamientos.FirstOrDefault(en => en.Id == _serieSeleccionada.IdEntrenamiento);
                 }
-                OnPropertyChanged();
             }
         }
 
-        public ICommand GuardarSerieCommand { get; }
-        public ICommand EliminarSerieCommand { get; }
-        public ICommand ActualizarSerieCommand { get; }
+        public Ejercicio? EjercicioSeleccionado
+        {
+            get => _ejercicioSeleccionado;
+            set { _ejercicioSeleccionado = value; OnPropertyChanged(nameof(EjercicioSeleccionado)); }
+        }
+
+        public Entrenamiento? EntrenamientoSeleccionado
+        {
+            get => _entrenamientoSeleccionado;
+            set { _entrenamientoSeleccionado = value; OnPropertyChanged(nameof(EntrenamientoSeleccionado)); }
+        }
+
+        public double NuevoPeso
+        {
+            get => _nuevoPeso;
+            set { _nuevoPeso = value; OnPropertyChanged(nameof(NuevoPeso)); }
+        }
+
+        public int NuevasRepeticiones
+        {
+            get => _nuevasRepeticiones;
+            set { _nuevasRepeticiones = value; OnPropertyChanged(nameof(NuevasRepeticiones)); }
+        }
+
+        public ICommand GuardarCommand { get; }
+        public ICommand EliminarCommand { get; }
 
         public SeriesViewModel()
         {
-            ListaSeries = new ObservableCollection<SerieDisplay>();
-            ListaEntrenamientos = new ObservableCollection<Entrenamiento>();
-            ListaEjercicios = new ObservableCollection<Ejercicio>();
+            _serieRepository = new SerieRepository();
+            _ejercicioRepository = new EjercicioRepository();
+            _entrenamientoRepository = new EntrenamientoRepository();
 
-            GuardarSerieCommand = new RelayCommand(EjecutarGuardar, PuedeGuardar);
-            EliminarSerieCommand = new RelayCommand(EjecutarEliminar, PuedeEliminar);
-            ActualizarSerieCommand = new RelayCommand(EjecutarActualizar, PuedeActualizar);
+            GuardarCommand = new RelayCommand(Guardar, PuedeGuardar);
+            EliminarCommand = new RelayCommand(Eliminar, (p) => SerieSeleccionada != null);
 
-            CargarListasDesplegables();
-            CargarSeries();
+            CargarDatos();
         }
 
-        private bool PuedeGuardar(object? obj)
+        private void CargarDatos()
         {
-            return EntrenamientoSeleccionado != null && EjercicioSeleccionado != null && Peso > 0 && Repeticiones > 0 && SerieSeleccionada == null;
+            ListaSeries = new ObservableCollection<Serie>(_serieRepository.GetAll());
+            ListaEjercicios = new ObservableCollection<Ejercicio>(_ejercicioRepository.GetAll());
+            ListaEntrenamientos = new ObservableCollection<Entrenamiento>(_entrenamientoRepository.GetAll());
         }
 
-        private void EjecutarGuardar(object? obj)
+        private bool PuedeGuardar(object? p) => EjercicioSeleccionado != null && EntrenamientoSeleccionado != null;
+
+        private void Guardar(object? p)
         {
-            using (var conexion = DatabaseHelper.GetConnection())
+            var serie = new Serie
             {
-                string sql = "INSERT INTO SERIES (id_ejercicio, id_entrenamiento, peso, repeticiones) VALUES (@idEj, @idEnt, @peso, @reps)";
-                using (var comando = new SQLiteCommand(sql, conexion))
-                {
-                    comando.Parameters.AddWithValue("@idEj", EjercicioSeleccionado!.Id);
-                    comando.Parameters.AddWithValue("@idEnt", EntrenamientoSeleccionado!.Id);
-                    comando.Parameters.AddWithValue("@peso", Peso);
-                    comando.Parameters.AddWithValue("@reps", Repeticiones);
-                    comando.ExecuteNonQuery();
-                }
+                IdEjercicio = EjercicioSeleccionado!.IdEjercicio,
+                IdEntrenamiento = EntrenamientoSeleccionado!.Id,
+                Peso = NuevoPeso,
+                Repeticiones = NuevasRepeticiones
+            };
+
+            if (SerieSeleccionada == null)
+            {
+                _serieRepository.Add(serie);
             }
-            LimpiarFormulario();
-            CargarSeries();
-        }
-
-        private bool PuedeEliminar(object? obj)
-        {
-            return SerieSeleccionada != null;
-        }
-
-        private void EjecutarEliminar(object? obj)
-        {
-            using (var conexion = DatabaseHelper.GetConnection())
+            else
             {
-                string sql = "DELETE FROM SERIES WHERE id_serie = @id";
-                using (var comando = new SQLiteCommand(sql, conexion))
-                {
-                    comando.Parameters.AddWithValue("@id", SerieSeleccionada!.Id);
-                    comando.ExecuteNonQuery();
-                }
+                serie.Id = SerieSeleccionada.Id;
+                _serieRepository.Update(serie);
             }
-            LimpiarFormulario();
-            CargarSeries();
+
+            CargarDatos();
         }
 
-        private bool PuedeActualizar(object? obj)
+        private void Eliminar(object? p)
         {
-            return SerieSeleccionada != null && EntrenamientoSeleccionado != null && EjercicioSeleccionado != null && Peso > 0 && Repeticiones > 0;
-        }
-
-        private void EjecutarActualizar(object? obj)
-        {
-            using (var conexion = DatabaseHelper.GetConnection())
+            if (SerieSeleccionada != null)
             {
-                string sql = "UPDATE SERIES SET id_ejercicio = @idEj, id_entrenamiento = @idEnt, peso = @peso, repeticiones = @reps WHERE id_serie = @id";
-                using (var comando = new SQLiteCommand(sql, conexion))
-                {
-                    comando.Parameters.AddWithValue("@idEj", EjercicioSeleccionado!.Id);
-                    comando.Parameters.AddWithValue("@idEnt", EntrenamientoSeleccionado!.Id);
-                    comando.Parameters.AddWithValue("@peso", Peso);
-                    comando.Parameters.AddWithValue("@reps", Repeticiones);
-                    comando.Parameters.AddWithValue("@id", SerieSeleccionada!.Id);
-                    comando.ExecuteNonQuery();
-                }
-            }
-            LimpiarFormulario();
-            CargarSeries();
-        }
-
-        private void LimpiarFormulario()
-        {
-            EntrenamientoSeleccionado = null;
-            EjercicioSeleccionado = null;
-            Peso = 0;
-            Repeticiones = 0;
-            SerieSeleccionada = null;
-        }
-
-        private void CargarListasDesplegables()
-        {
-            using (var conexion = DatabaseHelper.GetConnection())
-            {
-                string sqlEj = "SELECT id_ejercicio, nombre, musculo FROM EJERCICIOS";
-                using (var cmd = new SQLiteCommand(sqlEj, conexion))
-                using (var lector = cmd.ExecuteReader())
-                {
-                    while (lector.Read())
-                    {
-                        ListaEjercicios.Add(new Ejercicio { Id = lector.GetInt32(0), Nombre = lector.GetString(1), GrupoMuscular = lector.GetString(2) });
-                    }
-                }
-
-                string sqlEnt = "SELECT id_entrenamiento, fecha, comentario FROM ENTRENAMIENTOS ORDER BY fecha DESC";
-                using (var cmd = new SQLiteCommand(sqlEnt, conexion))
-                using (var lector = cmd.ExecuteReader())
-                {
-                    while (lector.Read())
-                    {
-                        ListaEntrenamientos.Add(new Entrenamiento { Id = lector.GetInt32(0), Fecha = lector.GetDateTime(1), Comentario = lector.IsDBNull(2) ? string.Empty : lector.GetString(2) });
-                    }
-                }
-            }
-        }
-
-        private void CargarSeries()
-        {
-            ListaSeries.Clear();
-            using (var conexion = DatabaseHelper.GetConnection())
-            {
-                string sql = @"
-                    SELECT s.id_serie, s.id_entrenamiento, s.id_ejercicio, en.fecha, ej.nombre, s.peso, s.repeticiones
-                    FROM SERIES s
-                    INNER JOIN ENTRENAMIENTOS en ON s.id_entrenamiento = en.id_entrenamiento
-                    INNER JOIN EJERCICIOS ej ON s.id_ejercicio = ej.id_ejercicio
-                    ORDER BY s.id_serie DESC";
-
-                using (var comando = new SQLiteCommand(sql, conexion))
-                using (var lector = comando.ExecuteReader())
-                {
-                    while (lector.Read())
-                    {
-                        ListaSeries.Add(new SerieDisplay
-                        {
-                            Id = lector.GetInt32(0),
-                            IdEntrenamiento = lector.GetInt32(1),
-                            IdEjercicio = lector.GetInt32(2),
-                            EntrenamientoInfo = lector.GetDateTime(3).ToString("dd/MM/yyyy"),
-                            EjercicioNombre = lector.GetString(4),
-                            Peso = lector.GetDouble(5),
-                            Repeticiones = lector.GetInt32(6)
-                        });
-                    }
-                }
+                _serieRepository.Delete(SerieSeleccionada.Id);
+                CargarDatos();
             }
         }
     }

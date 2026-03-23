@@ -2,8 +2,8 @@
 {
     public class Ejercicio
     {
-        public int Id { get; set; }
-        public string? Nombre { get; set; }
-        public string? GrupoMuscular { get; set; }
+        public int IdEjercicio { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Musculo { get; set; } = string.Empty;
     }
 }

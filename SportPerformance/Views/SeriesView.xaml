@@ -9,33 +9,32 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Registro de Series" Style="{StaticResource TituloStyle}"/>
+        <TextBlock Text="Gestión de Series" Style="{StaticResource TituloStyle}"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBlock Text="Sesión:" Style="{StaticResource LabelStyle}"/>
-            <ComboBox ItemsSource="{Binding ListaEntrenamientos}" SelectedItem="{Binding EntrenamientoSeleccionado}" DisplayMemberPath="Fecha" Width="100"/>
-
             <TextBlock Text="Ejercicio:" Style="{StaticResource LabelStyle}"/>
-            <ComboBox ItemsSource="{Binding ListaEjercicios}" SelectedItem="{Binding EjercicioSeleccionado}" DisplayMemberPath="Nombre" Width="100"/>
+            <ComboBox ItemsSource="{Binding ListaEjercicios}" SelectedItem="{Binding EjercicioSeleccionado}" DisplayMemberPath="Nombre" Width="120" Margin="5,0,15,0"/>
 
-            <TextBlock Text="Peso:" Style="{StaticResource LabelStyle}"/>
-            <TextBox Text="{Binding Peso, UpdateSourceTrigger=PropertyChanged}" Width="40"/>
+            <TextBlock Text="Entrenamiento:" Style="{StaticResource LabelStyle}"/>
+            <ComboBox ItemsSource="{Binding ListaEntrenamientos}" SelectedItem="{Binding EntrenamientoSeleccionado}" DisplayMemberPath="Fecha" ItemStringFormat="dd/MM/yyyy" Width="120" Margin="5,0,15,0"/>
+
+            <TextBlock Text="Peso (kg):" Style="{StaticResource LabelStyle}"/>
+            <TextBox Width="50" Text="{Binding NuevoPeso, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,15,0"/>
 
             <TextBlock Text="Reps:" Style="{StaticResource LabelStyle}"/>
-            <TextBox Text="{Binding Repeticiones, UpdateSourceTrigger=PropertyChanged}" Width="40"/>
+            <TextBox Width="50" Text="{Binding NuevasRepeticiones, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,15,0"/>
 
-            <Button Content="Nuevo" Command="{Binding GuardarSerieCommand}" Width="60"/>
-            <Button Content="Actualizar" Command="{Binding ActualizarSerieCommand}" Width="70"/>
-            <Button Content="Eliminar" Command="{Binding EliminarSerieCommand}" Width="70" Style="{StaticResource BotonEliminarStyle}"/>
+            <Button Content="Guardar" Command="{Binding GuardarCommand}" Width="70" Margin="0,0,5,0"/>
+            <Button Content="Eliminar" Command="{Binding EliminarCommand}" Width="80" Background="#E74C3C" Foreground="White" BorderThickness="0"/>
         </StackPanel>
 
         <DataGrid Grid.Row="2" ItemsSource="{Binding ListaSeries}" SelectedItem="{Binding SerieSeleccionada}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
-                <DataGridTextColumn Header="Fecha Sesión" Binding="{Binding EntrenamientoInfo}" Width="100"/>
-                <DataGridTextColumn Header="Ejercicio" Binding="{Binding EjercicioNombre}" Width="150"/>
-                <DataGridTextColumn Header="Peso (kg)" Binding="{Binding Peso}" Width="80"/>
-                <DataGridTextColumn Header="Repeticiones" Binding="{Binding Repeticiones}" Width="80"/>
+                <DataGridTextColumn Header="ID Ejercicio" Binding="{Binding IdEjercicio}" Width="80"/>
+                <DataGridTextColumn Header="ID Entreno" Binding="{Binding IdEntrenamiento}" Width="80"/>
+                <DataGridTextColumn Header="Peso" Binding="{Binding Peso}" Width="80"/>
+                <DataGridTextColumn Header="Repeticiones" Binding="{Binding Repeticiones}" Width="100"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
