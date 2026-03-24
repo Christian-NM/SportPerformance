@@ -24,7 +24,7 @@ Aplicación de escritorio desarrollada en **C#** y **WPF** bajo la arquitectura 
 * `Helpers/`: Clases de utilidad para la conexión a base de datos (`DatabaseHelper`).
 
 ## ⚙️ Instalación y Uso
-1. Clonar el repositorio: `git clone https://github.com/TU_USUARIO/SportPerformance.git`
+1. Clonar el repositorio: `git clone https://github.com/Christian-NM/SportPerformance.git`
 2. Abrir el archivo `.sln` en **Visual Studio**.
 3. Restaurar los paquetes NuGet (clic derecho en la solución -> Restaurar paquetes NuGet).
 4. Ejecutar el proyecto (F5). La base de datos se inicializará automáticamente en la primera ejecución.
